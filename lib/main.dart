@@ -7,6 +7,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:inustream_android_tv/pages/info_page.dart';
+import 'package:inustream_android_tv/pages/search_page.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:http/http.dart' as http;
 
@@ -38,6 +39,7 @@ class HomePage extends StatelessWidget {
   }) : super(key: key);
 
   int selectedPopularAnime = 0;
+  int selectedHomeScreen = 0;
 
   Future<dynamic> getPopularAnime() async {
     var response = await http.get(
@@ -77,18 +79,23 @@ class HomePage extends StatelessWidget {
                     NavbarIcon(
                       icon: FontAwesomeIcons.house,
                       isCurrent: true,
+                      navFunction: () {},
                     ),
                     SizedBox(
                       height: 24.0,
                     ),
                     NavbarIcon(
                       icon: FontAwesomeIcons.magnifyingGlass,
+                      navFunction: () {
+                        Get.to(SearchPage());
+                      },
                     ),
                     SizedBox(
                       height: 24.0,
                     ),
                     NavbarIcon(
                       icon: FontAwesomeIcons.plus,
+                      navFunction: () {},
                     ),
                   ],
                 ),
@@ -257,13 +264,8 @@ class HomePage extends StatelessWidget {
                                     ),
                                     Row(
                                       children: [
-                                        GestureDetector(
-                                          onTap: () {
-                                            print('INFO!!!');
-                                          },
-                                          child: InfoButton(
-                                            id: snapshot.data['id'],
-                                          ),
+                                        InfoButton(
+                                          id: snapshot.data['id'],
                                         ),
                                         SizedBox(
                                           width: 20.0,
@@ -385,7 +387,12 @@ class HomePage extends StatelessWidget {
 class NavbarIcon extends StatefulWidget {
   final IconData icon;
   bool isCurrent;
-  NavbarIcon({Key? key, required this.icon, this.isCurrent = false})
+  final Function navFunction;
+  NavbarIcon(
+      {Key? key,
+      required this.icon,
+      this.isCurrent = false,
+      required this.navFunction})
       : super(key: key);
 
   @override
@@ -403,7 +410,7 @@ class _NavbarIconState extends State<NavbarIcon> {
           isSelected = isFocused;
         });
       },
-      onClick: () {},
+      onClick: widget.navFunction,
       child: AnimatedContainer(
         duration: Duration(milliseconds: 200),
         width: 32.0,
